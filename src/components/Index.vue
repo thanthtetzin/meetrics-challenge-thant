@@ -4,7 +4,7 @@
       ADVERTISEMENT
     </div>
     <PageVisibility 
-      v-bind:ads="ads"
+      v-bind:ad_div_list="ad_div_list"
     />
   </div>
  
@@ -20,19 +20,10 @@ export default {
   },
   data() {
     return {
-      ads:[
+      ad_div_list:[
         {elementId: "ad", elementName: "ADVERTISEMENT"},
-        {elementId: "ad2", elementName: "ADVERTISEMENT2"}
-        ,
-         {elementId: "ad", elementName: "ADVERTISEMENT"},
-        {elementId: "ad2", elementName: "ADVERTISEMENT2"}
-        ,
-         {elementId: "ad", elementName: "ADVERTISEMENT"},
-        {elementId: "ad2", elementName: "ADVERTISEMENT2"}
-        , 
-        {elementId: "ad", elementName: "ADVERTISEMENT"},
-        {elementId: "ad2", elementName: "ADVERTISEMENT2"}
-      ]
+        {elementId: "ad2", elementName: "ADVERTISEMENT2"},
+      ],
     }
   }
 }
