@@ -1,7 +1,10 @@
 <template>
   <div>    
-    <div id="ad">
+    <div id="ad" ref="ad">
       ADVERTISEMENT
+    </div>
+    <div id="ad2" ref="ad2" style="margin-top:30px; background-color: #2ea5ea;">
+      ADVERTISEMENT 2
     </div>
     <PageVisibility 
       v-bind:ad_div_list="ad_div_list"
@@ -21,8 +24,8 @@ export default {
   data() {
     return {
       ad_div_list:[
-        {elementId: "ad", elementName: "ADVERTISEMENT"},
-        {elementId: "ad2", elementName: "ADVERTISEMENT2"},
+        {elementRef: "ad", elementName: "ADVERTISEMENT"},
+        {elementRef: "ad2", elementName: "ADVERTISEMENT 2"},
       ],
     }
   }
@@ -35,7 +38,7 @@ body {
   height: 2000px;
   width: 2500px;
 }
-#ad {
+#ad, #ad2 {
   width: 300px;
   height: 250px;
   background: #ee7202;

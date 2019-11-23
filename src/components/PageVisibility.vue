@@ -65,27 +65,29 @@ export default {
           threshold: []
         };
         // Put 0 to 1.0 values to threshold array in order to show 0% to 100% by 1 increment.
-        for (let i=0; i<=1.0; i+= 0.01) {
-          console.log(parseFloat(i.toFixed(2)));
+        for (let i=0; i<=1; i+= 0.01) {
           observerOptions.threshold.push(parseFloat(i.toFixed(2)));
         }
-        that.ad_div_list.forEach((ad_div) => {
-          that.tableItems.push({
-            id: ad_div.elementId,
-            name: ad_div.elementName,
-            viewable: false,
-            viewableTime: "0s",
-            viewablePercentage: "0%",
-            greaterThanEqual50Percent: false
-          });
+        observerOptions.threshold.push(1.0);
 
-          // Register element observer to observe element visibility
-          const elementToObserve = document.querySelector("#"+ad_div.elementId);
-          if(elementToObserve != null && elementToObserve != undefined){            
+        // Loop ad element that we got from parent Component Index.vue.
+        that.ad_div_list.forEach((ad_div) => {
+          const elementToObserve = that.$parent.$refs[ad_div.elementRef];
+          //if(elementToObserve != null && elementToObserve != undefined){   
+            that.tableItems.push({
+              id: ad_div.elementRef,
+              name: ad_div.elementName,
+              viewable: false,
+              viewableTime: "0s",
+              viewablePercentage: "0%",
+              greaterThanEqual50Percent: false
+            });
+
+            // Register element observer to observe element visibility
             const observer = new IntersectionObserver(that.updateElementViewabilityValues, observerOptions);
             observer.observe(elementToObserve);
             that.elementObservers.push(observer);
-          } 
+          //} 
         });
 
         // Edit Table column names
@@ -125,10 +127,21 @@ export default {
       entries.forEach((entry) => {
         let elmentInTable = that.tableItems.find(item => item.id == entry.target.id);
         if(elmentInTable){
-          let elementViewablePercentage = (Math.floor(entry.intersectionRatio * 100));
+          let elementViewablePercentage = Math.floor(entry.intersectionRatio * 100);
           elmentInTable.viewable = (entry.intersectionRatio > 0);
           elmentInTable.viewablePercentage = elementViewablePercentage + "%";
           elmentInTable.greaterThanEqual50Percent = (elementViewablePercentage >= 50);
+
+          // Start counter of viewing in seconds if the element viweable percentage is >= 50
+          // console.log(elementViewablePercentage);
+          // let seconds = 0;
+          // setInterval(function() {
+          //   if(elementViewablePercentage >= 50 && elmentInTable.viewable){
+          //     seconds += 1;
+          //     elmentInTable.viewableTime = seconds + "s";
+          //   }
+          // }, 1000);
+          
         }
       });
     },
@@ -175,53 +188,7 @@ export default {
       );
     }
   }
-
 }
-
-
-
-
-
-//
-// https://jsfiddle.net/hr77p7qb/3/
-// var app = new Vue({
-//   el: '#app',
-//   data: function() {
-//     return {
-//       msg: 'Hello World! This is a Event listener test.',
-//       windowWidth: 0,
-//       windowHeight: 0,
-//     }
-//   },
-
-//   mounted() {
-//     this.$nextTick(function() {
-//       window.addEventListener('resize', this.getWindowWidth);
-//       window.addEventListener('resize', this.getWindowHeight);
-
-//       //Init
-//       this.getWindowWidth()
-//       this.getWindowHeight()
-//     })
-
-//   },
-
-//   methods: {
-//     getWindowWidth(event) {
-//         this.windowWidth = document.documentElement.clientWidth;
-//       },
-
-//       getWindowHeight(event) {
-//         this.windowHeight = document.documentElement.clientHeight;
-//       }
-//   },
-//   beforeDestroy() {
-//     window.removeEventListener('resize', this.getWindowWidth);
-//     window.removeEventListener('resize', this.getWindowHeight);
-//   }
-// });
-
-//
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
@@ -232,8 +199,7 @@ export default {
   width: 40%;
   overflow-y: auto;
   font-size: 13px;
-  max-height: 500px;
-  height: 300px;
+  max-height: 338px;
   top: 23%;
   box-shadow: 3px 3px 5px 0px rgba(0, 0, 0, 0.5);
 }
