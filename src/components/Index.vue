@@ -23,6 +23,15 @@ export default {
       ads:[
         {elementId: "ad", elementName: "ADVERTISEMENT"},
         {elementId: "ad2", elementName: "ADVERTISEMENT2"}
+        ,
+         {elementId: "ad", elementName: "ADVERTISEMENT"},
+        {elementId: "ad2", elementName: "ADVERTISEMENT2"}
+        ,
+         {elementId: "ad", elementName: "ADVERTISEMENT"},
+        {elementId: "ad2", elementName: "ADVERTISEMENT2"}
+        , 
+        {elementId: "ad", elementName: "ADVERTISEMENT"},
+        {elementId: "ad2", elementName: "ADVERTISEMENT2"}
       ]
     }
   }
