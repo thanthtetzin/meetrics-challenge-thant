@@ -15,6 +15,10 @@
         :fields="tableFields"
         thead-class="hidden_header"
       >
+        <!-- A virtual composite column -->
+        <template v-slot:cell(viewableTime)="data">
+          {{ data.item.viewableTime }}s
+        </template>
       </b-table>
     </b-card>
   </div>
@@ -78,7 +82,7 @@ export default {
               id: ad_div.elementRef,
               name: ad_div.elementName,
               viewable: false,
-              viewableTime: "0s",
+              viewableTime: 0,
               viewablePercentage: "0%",
               greaterThanEqual50Percent: false
             });
@@ -141,6 +145,18 @@ export default {
           //     elmentInTable.viewableTime = seconds + "s";
           //   }
           // }, 1000);
+          
+          const performAnimation = () => {
+            //animate something
+            if(elmentInTable.viewable){
+                elmentInTable.viewableTime += 1;
+                requestAnimationFrame(performAnimation);
+            } 
+          }
+          requestAnimationFrame(performAnimation);
+
+          
+          
           
         }
       });
