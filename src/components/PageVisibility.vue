@@ -16,8 +16,11 @@
         thead-class="hidden_header"
       >
         <!-- A virtual composite column -->
-        <template v-slot:cell(viewableTime)="data">
-          {{ data.item.viewableTime }}s
+        <template v-slot:cell(viewedTime)="data">
+          {{ data.item.viewedTime }}s
+        </template>
+        <template v-slot:cell(viewablePercentage)="data">
+          {{ data.item.viewablePercentage }}%
         </template>
       </b-table>
     </b-card>
@@ -82,8 +85,9 @@ export default {
               id: ad_div.elementRef,
               name: ad_div.elementName,
               viewable: false,
-              viewableTime: 0,
-              viewablePercentage: "0%",
+              viewedTime: 0,
+              viewedTimeCounter: null,
+              viewablePercentage: "0",
               greaterThanEqual50Percent: false
             });
 
@@ -106,9 +110,9 @@ export default {
             label: 'Viewable'
           },
           {
-            key: 'viewableTime',
+            key: 'viewedTime',
             sortable: false,
-            label: 'ViewableTime'
+            label: 'ViewedTime'
           },
           {
             key: 'viewablePercentage',
@@ -128,41 +132,56 @@ export default {
      */
     updateElementViewabilityValues(entries) {
       let that = this;
-      entries.forEach((entry) => {
-        let elmentInTable = that.tableItems.find(item => item.id == entry.target.id);
-        if(elmentInTable){
-          let elementViewablePercentage = Math.floor(entry.intersectionRatio * 100);
-          elmentInTable.viewable = (entry.intersectionRatio > 0);
-          elmentInTable.viewablePercentage = elementViewablePercentage + "%";
-          elmentInTable.greaterThanEqual50Percent = (elementViewablePercentage >= 50);
+      if(that.activeUser){
+        entries.forEach((entry) => {
+          let elmentInTable = that.tableItems.find(item => item.id == entry.target.id);
+          if(elmentInTable){
+            let elementViewablePercentage = Math.floor(entry.intersectionRatio * 100);
+            elmentInTable.viewable = (entry.intersectionRatio > 0);
+            elmentInTable.viewablePercentage = elementViewablePercentage;
+            elmentInTable.greaterThanEqual50Percent = (elementViewablePercentage >= 50);
 
-          // Start counter of viewing in seconds if the element viweable percentage is >= 50
-          // console.log(elementViewablePercentage);
-          // let seconds = 0;
-          // setInterval(function() {
-          //   if(elementViewablePercentage >= 50 && elmentInTable.viewable){
-          //     seconds += 1;
-          //     elmentInTable.viewableTime = seconds + "s";
-          //   }
-          // }, 1000);
+            // Start viewedTimeCounter of viewing in seconds if the element viweable percentage is >= 50
+            if(elmentInTable.greaterThanEqual50Percent && elmentInTable.viewable){
+              if(elmentInTable.viewedTimeCounter == null){
+                elmentInTable.viewedTimeCounter = setInterval(function() {
+                  elmentInTable.viewedTime++; 
+                }, 1000);
+              } 
+            } else {
+              clearInterval(elmentInTable.viewedTimeCounter);
+              elmentInTable.viewedTimeCounter = null;
+            }
           
-          const performAnimation = () => {
-            //animate something
-            if(elmentInTable.viewable){
-                elmentInTable.viewableTime += 1;
-                requestAnimationFrame(performAnimation);
-            } 
+            // let seconds = 0;
+            // setInterval(function() {
+            //   if(elementViewablePercentage >= 50 && elmentInTable.viewable){
+            //     seconds += 1;
+            //     elmentInTable.viewedTime = seconds + "s";
+            //   }
+            // }, 1000);
+            
+            // const tick = now => {
+            //   if(elmentInTable.greaterThanEqual50Percent && elmentInTable.viewable && that.activeUser){
+            //     if (elmentInTable.start == null) {
+            //       elmentInTable.start = now;
+            //     }
+            //     elmentInTable.elapsed =  now - elmentInTable.start;
+
+            //     //elmentInTable.viewedTime = (elmentInTable.elapsed / 1000).toFixed(2);
+            //     elmentInTable.viewedTime = ((elmentInTable.elapsed % 60000) / 1000).toFixed(2);
+            //     requestAnimationFrame(tick);
+            //   }
+            // };
+            // requestAnimationFrame(tick);
           }
-          requestAnimationFrame(performAnimation);
-
-          
-          
-          
-        }
-      });
+        });
+      }
     },
     /**
-     * Check if document has focus or not.
+     * Check if document has focus or not. 
+     * If has focus, it is activeUser. If lost focus, it is inactive user.
+     * If inactive user, stop the viewedTime timer. If active user, continue playing the timer.
      */
     checkDocumentFocus(){
       let that = this;
@@ -170,6 +189,31 @@ export default {
       console.log("documentIsFocused: " , 
                   document.hasFocus(), 
                   document.hasFocus() ? ', Active User' : ', Inactive User');
+
+      that.controlElementViewedTimeCounterStartStop();
+      
+    },
+    /**
+     * Control element's viewedTimeCounter stop, start based on active/Inactive user.
+     */
+    controlElementViewedTimeCounterStartStop(){
+      let that = this;
+      if(!that.activeUser){
+        let elementsThatHasRunningCounter = that.tableItems.filter(item => item.viewedTimeCounter != null);
+        elementsThatHasRunningCounter.forEach((element) => {
+          clearInterval(element.viewedTimeCounter);
+          element.viewedTimeCounter = null;
+        });
+      }else{
+        let viewableElements = that.tableItems.filter(item => item.greaterThanEqual50Percent && item.viewable);
+        viewableElements.forEach((element) => {
+          if(element.viewedTimeCounter == null){
+              element.viewedTimeCounter = setInterval(function() {
+                element.viewedTime++; 
+              }, 1000);
+            }
+        });
+      }
     },
     /**
      * Do the elements viewability process when browser window get scrolling.
