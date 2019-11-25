@@ -80,7 +80,7 @@ export default {
         // Loop ad element that we got from parent Component Index.vue.
         that.ad_div_list.forEach((ad_div) => {
           const elementToObserve = that.$parent.$refs[ad_div.elementRef];
-          //if(elementToObserve != null && elementToObserve != undefined){   
+          if(elementToObserve != null && elementToObserve != undefined){   
             that.tableItems.push({
               id: ad_div.elementRef,
               name: ad_div.elementName,
@@ -88,14 +88,24 @@ export default {
               viewedTime: 0,
               viewedTimeCounter: null,
               viewablePercentage: "0",
-              greaterThanEqual50Percent: false
+              greaterThanEqual50Percent: false,
+              clicks: 0
             });
 
             // Register element observer to observe element visibility
             const observer = new IntersectionObserver(that.updateElementViewabilityValues, observerOptions);
             observer.observe(elementToObserve);
             that.elementObservers.push(observer);
-          //} 
+
+            // Register onclick on element
+            elementToObserve.addEventListener('click', (() => {
+              let elementRef = ad_div.elementRef;
+              return () => { 
+                that.trackElementOnClick(elementRef);
+              }
+            })());
+            
+          }
         });
 
         // Edit Table column names
@@ -123,9 +133,24 @@ export default {
             key: 'greaterThanEqual50Percent',
             label: '≥ 50% visible',
             sortable: false,
-          }
+          },
+          {
+            key: 'clicks',
+            label: 'Clicks',
+            sortable: false,
+          },
         ];
       });
+    },
+    /**
+     * Track the clicks on element.
+     */
+    trackElementOnClick(elementRef){
+      let that = this;
+      let clickedElement = that.tableItems.find(item => item.id == elementRef);
+      if(clickedElement != null && clickedElement != undefined){
+        clickedElement.clicks++;
+      }
     },
     /**
      * Update element's viewability properties values.
@@ -145,8 +170,10 @@ export default {
             if(elmentInTable.greaterThanEqual50Percent && elmentInTable.viewable){
               if(elmentInTable.viewedTimeCounter == null){
                 elmentInTable.viewedTimeCounter = setInterval(function() {
-                  elmentInTable.viewedTime++; 
-                }, 1000);
+                  let viewedTime = Number(elmentInTable.viewedTime);
+                  viewedTime+=0.1;
+                  elmentInTable.viewedTime = viewedTime.toFixed(1);
+                }, 500);
               } 
             } else {
               clearInterval(elmentInTable.viewedTimeCounter);
@@ -209,8 +236,10 @@ export default {
         viewableElements.forEach((element) => {
           if(element.viewedTimeCounter == null){
               element.viewedTimeCounter = setInterval(function() {
-                element.viewedTime++; 
-              }, 1000);
+                let viewedTime = Number(element.viewedTime);
+                viewedTime+=0.1;
+                element.viewedTime = viewedTime.toFixed(1);
+              }, 500);
             }
         });
       }
@@ -255,8 +284,8 @@ export default {
 <style>
 .page-visibility-card{
   position: fixed !important;
-  right: 25%;
-  width: 40%;
+  right: 23%;
+  width: 42%;
   overflow-y: auto;
   font-size: 13px;
   max-height: 338px;
