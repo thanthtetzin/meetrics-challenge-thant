@@ -3,10 +3,11 @@
     <div id="ad" ref="ad">
       ADVERTISEMENT
     </div>
-    <div id="ad2" ref="ad2" style="margin-top:30px; background-color: #2ea5ea;">
+    <!-- * Enable The Following ADVERTISEMENT 2 to test dynamic elements viewability detection -->
+    <!--<div id="ad2" ref="ad2" style="margin-top:30px; background-color: #2ea5ea;">
       ADVERTISEMENT 2
-    </div>
-    <PageVisibility 
+    </div>-->
+    <ViewabilityDetector 
       v-bind:ad_div_list="ad_div_list"
     />
   </div>
@@ -14,18 +15,19 @@
 </template>
 
 <script>
-import PageVisibility from './PageVisibility.vue';
+import ViewabilityDetector from './ViewabilityDetector.vue';
 
 export default {
   name: 'Index',
   components: {
-    PageVisibility
+    ViewabilityDetector
   },
   data() {
     return {
       ad_div_list:[
         {elementRef: "ad", elementName: "ADVERTISEMENT"},
-        {elementRef: "ad2", elementName: "ADVERTISEMENT 2"},
+        // * Add more element(s) here with unique elementRef for multiple element's viewability detection
+        //{elementRef: "ad2", elementName: "ADVERTISEMENT 2"},
       ],
     }
   }

@@ -15,7 +15,7 @@
         :fields="tableFields"
         thead-class="hidden_header"
       >
-        <!-- A virtual composite column -->
+        <!-- overriding the fields to show how we want -->
         <template v-slot:cell(viewedTime)="data">
           {{ data.item.viewedTime }}s
         </template>
@@ -29,7 +29,7 @@
 
 <script>
 export default {
-  name: 'PageVisibility',
+  name: 'ViewabilityDetector',
   props: {
     msg: String,
     ad_div_list: Array
@@ -37,7 +37,6 @@ export default {
   data(){
     return{
       activeUser: true,
-      // ad_div_list: this.ad_div_list,
       tableItems: [],
       tableFields: [],
       elementObservers: [],
@@ -58,7 +57,6 @@ export default {
         document.addEventListener("visibilitychange", that.checkDocumentFocus);
         window.addEventListener('focus', that.checkDocumentFocus);
         window.addEventListener('blur', that.checkDocumentFocus);
-        //window.addEventListener('scroll', that.processViewabilityOnScroll);
       });
     },
     /**
@@ -179,28 +177,6 @@ export default {
               clearInterval(elmentInTable.viewedTimeCounter);
               elmentInTable.viewedTimeCounter = null;
             }
-          
-            // let seconds = 0;
-            // setInterval(function() {
-            //   if(elementViewablePercentage >= 50 && elmentInTable.viewable){
-            //     seconds += 1;
-            //     elmentInTable.viewedTime = seconds + "s";
-            //   }
-            // }, 1000);
-            
-            // const tick = now => {
-            //   if(elmentInTable.greaterThanEqual50Percent && elmentInTable.viewable && that.activeUser){
-            //     if (elmentInTable.start == null) {
-            //       elmentInTable.start = now;
-            //     }
-            //     elmentInTable.elapsed =  now - elmentInTable.start;
-
-            //     //elmentInTable.viewedTime = (elmentInTable.elapsed / 1000).toFixed(2);
-            //     elmentInTable.viewedTime = ((elmentInTable.elapsed % 60000) / 1000).toFixed(2);
-            //     requestAnimationFrame(tick);
-            //   }
-            // };
-            // requestAnimationFrame(tick);
           }
         });
       }
@@ -218,7 +194,6 @@ export default {
                   document.hasFocus() ? ', Active User' : ', Inactive User');
 
       that.controlElementViewedTimeCounterStartStop();
-      
     },
     /**
      * Control element's viewedTimeCounter stop, start based on active/Inactive user.
@@ -243,29 +218,6 @@ export default {
             }
         });
       }
-    },
-    /**
-     * Do the elements viewability process when browser window get scrolling.
-     */
-    processViewabilityOnScroll(){
-      console.log('Scroll happens');
-      let that = this;
-      //console.log(this.$parent.$refs.ad.getBoundingClientRect());
-
-      var bounding = that.$parent.$refs.ad.getBoundingClientRect();
-      console.log('el_top: ' + bounding.top + ' >= 0');
-      console.log('el_left: ' + bounding.left + ' >= 0');
-      console.log('el_bottom: ' + bounding.bottom + ' <= ' + (window.innerHeight || document.documentElement.clientHeight) + " (windowHeight)");
-      console.log('el_right: ' + bounding.right + ' <= ' + (window.innerWidth || document.documentElement.clientWidth) + " (windowWidth)");
-
-      // that.tableItems.forEach(() => {
-      //   let ad_element = this.$refs.ad;
-      //   console.log(ad_element)
-      //   // if(ad_element.length){
-      //   //   console.log(ad_element.getBoundingClientRect());
-      //   // }
-       
-      // });
     },
     isInViewport(elem) {
       var bounding = elem.getBoundingClientRect();
