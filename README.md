@@ -7,7 +7,7 @@ This project was built by using VueJs framework (VueCli).
 
 Project Folder Structure
 ```
-- public (Where vue files are combined)
+- public
 - src 
   - assets
   - components
