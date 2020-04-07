@@ -1,5 +1,5 @@
 ### This app is about
-- Vue app that will detect live advertisement element viewability in percentage, clicks on advertiement, active/Inactive user based on page has focus or not.
+- A Vue app that will detect live advertisement element viewability in percentage, clicks on advertiement, active/Inactive user based on page has focus or not.
 - Please read full documentation at https://drive.google.com/open?id=1UH098Uif12GohKEZm5z3WThG0NnO3iJz
 
 ### About the Project
@@ -7,7 +7,6 @@ This project was built by using VueJs framework (VueCli).
 
 Project Folder Structure
 ```
-- origin-folder (Where I keep origin meetrics-challenge files)
 - public (Where vue files are combined)
 - src 
   - assets
